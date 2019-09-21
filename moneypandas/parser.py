@@ -83,21 +83,18 @@ def _as_money_object(val, default_money_code=None):
             cu = str(val[1])
         except TypeError:
             pass
-    elif default_money_code:
-        cu = default_money_code
-        try:
-            va = np.float64(val)
-        except:
-            pass
 
     if cu is not None and va is not None:
         return va, cu
 
-    if cu is None:
-        try:
-            va = np.float64(val)
-        except TypeError:
-            pass
+    try:
+        va = np.float64(val)
+    except TypeError:
+        pass
+    else:
+        if default_money_code:
+            cu = default_money_code
+            return va, cu
         else:
             raise ValueError("Currency code is not available, so cannot convert {} - have you set a default?".format(val))
 

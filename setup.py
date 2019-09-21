@@ -19,7 +19,7 @@ tests_require = install_requires + [
 
 setup(
     name='moneypandas',
-    use_scm_version=True,
+    version='0.9.3',
     setup_requires=['setuptools_scm'],
     description='Money type for pandas',
     long_description=long_description,
