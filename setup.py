@@ -10,28 +10,31 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 install_requires = [
     "pandas>=0.23.0",
     "six",
-    "ipaddress; python_version < '3'"
+    "money"
+]
+tests_require = install_requires + [
+    "pytest",
+    "hypothesis"
 ]
 
 setup(
-    name='cyberpandas',
+    name='moneypandas',
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
-    description='IP Address type for pandas',
+    description='Money type for pandas',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url='https://github.com/ContinuumIO/cyberpandas',
-    author='Tom Augspurger',
-    author_email='tom.w.augspurger@gmail.com',
+    url='https://github.com/flaxandteal/moneypandas',
+    author='Phil Weir (moneypandas tweaks), Tom Augspurger (cyberpandas)',
+    author_email='phil.weir@flaxandteal.co.uk',
     license="BSD",
     classifiers=[  # Optional
         'License :: OSI Approved :: BSD License',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
     ],
     packages=find_packages(),
     install_requires=install_requires,
+    tests_require=tests_require
 )

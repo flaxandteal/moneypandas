@@ -1,22 +1,27 @@
 import pytest
+import pandas.util.testing as tm
+import pandas as pd
 from pandas.tests.extension import base
+from pandas.tests.extension.conftest import *
+import numpy as np
 
-import cyberpandas as ip
+import moneypandas as mpd
 
 
 @pytest.fixture
 def dtype():
-    return ip.IPType()
+    return mpd.MoneyType()
 
 
 @pytest.fixture
 def data():
-    return ip.IPArray(list(range(100)))
+    ma = mpd.MoneyArray(list(range(1, 101)), 'USD')
+    return ma
 
 
 @pytest.fixture
 def data_missing():
-    return ip.IPArray([0, 1])
+    return mpd.MoneyArray([np.nan, 1], 'USD')
 
 
 @pytest.fixture(params=['data', 'data_missing'])
@@ -30,22 +35,22 @@ def all_data(request, data, data_missing):
 
 @pytest.fixture
 def data_for_sorting():
-    return ip.IPArray([10, 2 ** 64 + 1, 1])
+    return mpd.MoneyArray([10, 123, 1], default_money_code='GBP')
 
 
 @pytest.fixture
 def data_missing_for_sorting():
-    return ip.IPArray([2 ** 64 + 1, 0, 1])
+    return mpd.MoneyArray([2, None, 1], default_money_code='GBP')
 
 
 @pytest.fixture
 def data_for_grouping():
     b = 1
-    a = 2 ** 32 + 1
-    c = 2 ** 32 + 10
-    return ip.IPArray([
-        b, b, 0, 0, a, a, b, c
-    ])
+    a = 233
+    c = 242
+    return mpd.MoneyArray([
+        b, b, np.nan, None, a, a, b, c
+    ], 'USD')
 
 
 @pytest.fixture
@@ -63,14 +68,14 @@ def na_cmp():
     Should return a function of two arguments that returns
     True if both arguments are (scalar) NA for your type.
 
-    By defult, uses ``operator.or``
+    By default, uses ``operator.or``
     """
-    return lambda x, y: int(x) == int(y) == 0
+    return lambda x, y: pd.isna(x) and pd.isna(y)
 
 
 @pytest.fixture
 def na_value():
-    return ip.IPType.na_value
+    return mpd.MoneyType.na_value
 
 
 class TestDtype(base.BaseDtypeTests):
@@ -117,6 +122,10 @@ class TestMethods(base.BaseMethodsTests):
     def test_combine_add(self, data_repeated):
         super().test_combine_add(data_repeated)
 
-    @pytest.mark.xfail(reason="buggy comparison of v4 and v6")
-    def test_searchsorted(self, data_for_sorting, as_series):
-        return super().test_searchsorted(data_for_sorting, as_series)
+    def test_argsort_missing_array(self, data_missing_for_sorting):
+        result = data_missing_for_sorting.argsort()
+        expected = np.array([1, 2, 0], dtype=np.dtype("int"))
+        # we don't care whether it's int32 or int64
+        result = result.astype("int64", casting="safe")
+        expected = expected.astype("int64", casting="safe")
+        tm.assert_numpy_array_equal(result, expected)

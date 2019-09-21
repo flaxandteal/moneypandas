@@ -8,7 +8,7 @@ from pandas.core.arrays import ExtensionArray
 class NumPyBackedExtensionArrayMixin(ExtensionArray):
     @property
     def dtype(self):
-        """The dtype for this extension array, IPType"""
+        """The dtype for this extension array, MoneyType"""
         return self._dtype
 
     @classmethod

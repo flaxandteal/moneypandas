@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
-echo "Building cyberpandas"
+echo "Building moneypandas"
 
-conda build -c defaults -c conda-forge conda-recipes/cyberpandas --python=${PYTHON}
+conda build -c defaults -c conda-forge conda-recipes/moneypandas --python=${PYTHON}

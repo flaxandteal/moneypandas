@@ -1,4 +1,4 @@
-name: cyberpandas-docs
+name: moneypandas-docs
 channels:
   - defaults
   - conda-forge

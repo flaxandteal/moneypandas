@@ -1,13 +1,11 @@
 """Custom IP address dtype / block for pandas"""
 
-from .ip_array import (
-    IPType,
-    IPArray,
-    IPAccessor,
+from .money_array import (
+    MoneyType,
+    MoneyArray,
+    MoneyAccessor,
 )
-from .ip_methods import ip_range
-from .parser import to_ipaddress
-from .mac_array import MACType, MACArray
+from .parser import to_money
 
 from pkg_resources import get_distribution, DistributionNotFound
 try:
@@ -22,11 +20,8 @@ del DistributionNotFound
 
 __all__ = [
     '__version__',
-    'IPAccessor',
-    'IPArray',
-    'IPType',
-    'MACArray',
-    'MACType',
-    'ip_range',
-    'to_ipaddress',
+    'MoneyAccessor',
+    'MoneyArray',
+    'MoneyType',
+    'to_money',
 ]

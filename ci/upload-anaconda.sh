@@ -16,9 +16,9 @@ if [ -z "$UPLOAD_KEY" ]; then
     return 0
 fi
 
-export UPLOADFILE=`conda build conda-recipes/cyberpandas --python=${PYTHON} --output`
+export UPLOADFILE=`conda build conda-recipes/moneypandas --python=${PYTHON} --output`
 echo "UPLOADFILE = ${UPLOADFILE}"
 
-echo "[Upload cyberpandas]"
+echo "[Upload moneypandas]"
 echo ${UPLOADFILE}
 anaconda -t ${UPLOAD_KEY} upload -u intake --force ${UPLOADFILE}

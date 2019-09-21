@@ -5,19 +5,19 @@ import pandas as pd
 import pandas.util.testing as tm
 import pytest
 
-import cyberpandas as ip
+import moneypandas as mpd
 
 
 @pytest.fixture
 def series():
-    return pd.Series(ip.IPArray.from_pyints([0, 1, 2]))
+    return pd.Series(mpd.MoneyArray([None, 1, 2], 'USD'))
 
 
 @pytest.fixture
 def frame():
-    return pd.DataFrame({"A": ip.IPArray.from_pyints([0, 1, 2]),
+    return pd.DataFrame({"A": mpd.MoneyArray([None, 1, 2], 'GBP'),
                          "B": [0, 1, 2],
-                         "C": ip.IPArray.from_pyints([0, 1, 2])})
+                         "C": mpd.MoneyArray([np.nan, 1, 2], 'USD')})
 
 
 @pytest.fixture(params=['series', 'frame'])
@@ -47,7 +47,7 @@ def test_works_frame(frame, method):
 
 
 def test__take(frame):
-    return frame._take([0], axis=0)
+    return frame.take([0], axis=0)
 
 
 def test_iloc_series(series):
@@ -100,9 +100,9 @@ def test_loc_frame(frame):
 
 def test_reindex(frame):
     result = frame.reindex([0, 10])
-    expected = pd.DataFrame({"A": ip.IPArray.from_pyints([0, 0]),
+    expected = pd.DataFrame({"A": mpd.MoneyArray([None, np.nan], 'USD'),
                              "B": [0, np.nan],
-                             "C": ip.IPArray.from_pyints([0, 0])},
+                             "C": mpd.MoneyArray([None, np.nan], 'USD')},
                             index=[0, 10])
     tm.assert_frame_equal(result, expected)
 
@@ -127,16 +127,16 @@ def test_isna_frame(frame):
 
 @pytest.mark.xfail(reason="Not implemented")
 def test_fillna():
-    result = pd.Series(ip.IPArray([1, 0])).fillna(method='ffill')
-    expected = pd.Series(ip.IPArray([1, 1]))
+    result = pd.Series(mpd.MoneyArray([1, 0], 'USD')).fillna(method='ffill')
+    expected = pd.Series(mpd.MoneyArray([1, 1], 'USD'))
     tm.assert_series_equal(result, expected)
 
 
 @pytest.mark.xfail(reason="Not implemented")
 def test_dropna():
-    missing = pd.Series(ip.IPArray([1, 0]))
+    missing = pd.Series(mpd.MoneyArray([1, 0], 'USD'))
     result = missing.dropna()
-    expected = pd.Series(ip.IPArray([1]))
+    expected = pd.Series(mpd.MoneyArray([1], 'USD'))
     tm.assert_series_equal(result, expected)
 
     result = missing.to_frame().dropna()

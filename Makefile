@@ -1,6 +1,6 @@
-.PHONY: build-cyberpandas all
+.PHONY: build-moneypandas all
 
-all: build-cyberpandas
+all: build-moneypandas
 
-build-cyberpandas-%:
-	LDFLAGS="-headerpad_max_install_name" conda build conda-recipes/cyberpandas $(patsubst build-cyberpandas-%,--python=%,$@)
+build-moneypandas-%:
+	LDFLAGS="-headerpad_max_install_name" conda build conda-recipes/moneypandas $(patsubst build-moneypandas-%,--python=%,$@)

@@ -1,3 +1,9 @@
+# Moneypandas
+
+Moneypandas is a prototype fork of Cyberpandas for currency, using the `money` library.
+
+----
+
 # Cyberpandas
 
 [![Build Status](https://travis-ci.org/ContinuumIO/cyberpandas.svg?branch=master)](https://travis-ci.org/ContinuumIO/cyberpandas)

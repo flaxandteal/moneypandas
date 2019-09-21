@@ -61,7 +61,7 @@ conda list test-environment
 python -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
 
 echo
-echo "[install cyberpandas]"
+echo "[install moneypandas]"
 pip install --no-deps -e .
 
 echo "[finished install]"
