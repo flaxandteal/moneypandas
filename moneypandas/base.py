@@ -2,10 +2,10 @@ import operator
 
 import numpy as np
 
-from pandas.core.arrays import ExtensionArray
+from pandas.core.arrays import ExtensionArray, ExtensionScalarOpsMixin
 
 
-class NumPyBackedExtensionArrayMixin(ExtensionArray):
+class NumPyBackedExtensionArrayMixin(ExtensionArray, ExtensionScalarOpsMixin):
     @property
     def dtype(self):
         """The dtype for this extension array, MoneyType"""
@@ -69,3 +69,6 @@ class NumPyBackedExtensionArrayMixin(ExtensionArray):
         _, indices = np.unique(self.data, return_index=True)
         data = self.data.take(np.sort(indices))
         return self._from_ndarray(data)
+
+NumPyBackedExtensionArrayMixin._add_arithmetic_ops()
+NumPyBackedExtensionArrayMixin._add_comparison_ops()

@@ -2,9 +2,10 @@ import abc
 import decimal
 import collections
 
-import six
 import numpy as np
+from pandas.compat.numpy import function as nv
 import pandas as pd
+from pandas.core import nanops
 import money
 from pandas.api.extensions import ExtensionDtype
 
@@ -124,9 +125,70 @@ class MoneyArray(NumPyBackedExtensionArrayMixin):
         result = decimalize(self.data['va'])
         for i, ceq in enumerate(same):
             if not ceq:
-                result[i] = money.XMoney(*self.data[i]).to(money_code)
+                result[i] = money.XMoney(*self.data[i]).to(money_code).amount
 
         return result
+
+    # Operations thanks to pandas.core.arrays.base.numpy_
+    def _min(self, ndarray, axis=None, out=None, keepdims=False, skipna=True):
+        nv.validate_min((), dict(out=out, keepdims=keepdims))
+        return nanops.nanmin(ndarray, axis=axis, skipna=skipna)
+
+    def _max(self, ndarray, axis=None, out=None, keepdims=False, skipna=True):
+        nv.validate_max((), dict(out=out, keepdims=keepdims))
+        return nanops.nanmax(ndarray, axis=axis, skipna=skipna)
+
+    def _sum(
+        self,
+        ndarray,
+        axis=None,
+        dtype=None,
+        out=None,
+        keepdims=False,
+        initial=None,
+        skipna=True,
+        min_count=0,
+    ):
+        nv.validate_sum(
+            (), dict(dtype=dtype, out=out, keepdims=keepdims, initial=initial)
+        )
+        return nanops.nansum(
+            ndarray, axis=axis, skipna=skipna, min_count=min_count
+        )
+
+    def _reduce(self, name, skipna=True, **kwargs):
+        currencies = [cu for cu in np.unique(self.data['cu']) if cu]
+        totals = {}
+
+        if name == 'mean':
+            meth = getattr(self, '_sum', None)
+        else:
+            meth = getattr(self, '_' + name, None)
+
+        if meth:
+            if len(currencies) > 1:
+                money_code = self.default_money_code if self.default_money_code else currencies[0]
+                for i, currency in enumerate(currencies):
+                    totals[currency] = money.XMoney(
+                        meth(self.data['va'][self.data['cu'] == currency], skipna=skipna, **kwargs),
+                        currency
+                    )
+                total = meth(
+                    np.array([subtotal.to(money_code).amount for subtotal in totals.values()]),
+                    skipna=skipna,
+                    **kwargs
+                )
+                if name == 'mean':
+                    total = total / len(self.data)
+                total = money.XMoney(amount=total, currency=money_code)
+            else:
+                money_code = currencies[0] if currencies else self.default_money_code
+                total = money.XMoney(meth(self.data['va'], skipna=skipna, **kwargs), money_code)
+
+            return total
+        else:
+            msg = "'{}' does not implement reduction '{}'"
+            raise TypeError(msg.format(type(self).__name__, name))
 
     @classmethod
     def from_bytes(cls, bytestring):
@@ -398,6 +460,37 @@ class MoneyArray(NumPyBackedExtensionArrayMixin):
     def _values_for_factorize(self):
         return self.astype(object), (0, '')
 
+    def to_currency(self, money_code, shallow=True, in_place=False):
+        if shallow:
+            if in_place:
+                copy = self
+            else:
+                copy = self.copy()
+            copy.default_money_code = money_code
+        else:
+            mask = self.isna()
+            same = (self.data['cu'] == money_code) | mask
+            decimalize = np.vectorize(decimal.Decimal)
+
+            result = self.data
+            if not in_place:
+                result = result.copy()
+
+            for i, ceq in enumerate(same):
+                if not ceq:
+                    va = money.XMoney(self.data[i]['va'], self.data[i]['cu']) \
+                           .to(money_code).amount
+                    result[i] = (va, money_code)
+
+            if in_place:
+                self.data = result
+            copy = self.__class__(
+                result,
+                default_money_code=money_code,
+                dtype=self.dtype
+            )
+
+        return copy
 
 # -----------------------------------------------------------------------------
 # Accessor
@@ -420,6 +513,16 @@ class MoneyAccessor:
         if not is_money_type(obj):
             raise AttributeError("Cannot use 'money' accessor on objects of "
                                  "dtype '{}'.".format(obj.dtype))
+
+    def to_currency(self, money_code, shallow=True, in_place=True):
+        return delegated_method(
+            self._data.to_currency,
+            self._index,
+            self._name,
+            money_code,
+            shallow,
+            in_place
+        )
 
 
 def is_money_type(obj):
