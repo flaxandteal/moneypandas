@@ -4,6 +4,17 @@ Moneypandas is a prototype fork of Cyberpandas for currency, using the `money` l
 
 This package provides support for storing currency data inside a pandas DataFrame using pandas' [Extension Array Interface](http://pandas-docs.github.io/pandas-docs-travis/extending.html#extension-types)
 
+
+## Set Up Dev Environment
+
+Run `pipenv shell` or another Python3 virtual envirnonment.
+
+Run `python3 setup.py develop`
+
+The env should be set up. Run `python3 examples/three_currency.py` to check.
+
+
+
 ```python
 In [1]: from moneypandas import MoneyArray
 
