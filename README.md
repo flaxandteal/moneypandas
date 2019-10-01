@@ -13,7 +13,24 @@ Run `python3 setup.py develop`
 
 The env should be set up. Run `python3 examples/three_currency.py` to check.
 
+## Contributing (For new open source contributers!)
 
+Clone this repo using `SSH` or `HTTPS`
+
+For any changes, do `git checkout -b [feature/bug][description-of-issue]` to create a new branch.
+
+Once your changes are made, `git add [file-name]`. Add each file individually.
+
+Run `git status` to make sure all the files you want are added to this commit.
+
+Do `git commit -m "A message describing what changes you made, and why, possible bugs, and what you want to do"`. This will make it easier to refer back to in future.
+
+Run `git push -u origin [branch-name]`. If there have been no issues then a pull request should be open. Follow the link that was returned in the console to complete the PR.
+
+
+___
+
+## Example
 
 ```python
 In [1]: from moneypandas import MoneyArray
