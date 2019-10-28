@@ -157,6 +157,9 @@ class MoneyArray(NumPyBackedExtensionArrayMixin):
         )
 
     def _reduce(self, name, skipna=True, **kwargs):
+        """ _reduce is called when min, sum or max is called via the pandas series (column). 
+        It's stored as an array of floats & the _reduce operation is performed on that.
+        """
         currencies = [cu for cu in np.unique(self.data['cu']) if cu]
         totals = {}
 
