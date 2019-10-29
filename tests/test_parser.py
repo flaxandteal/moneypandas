@@ -1,4 +1,5 @@
 import money
+from iso4217parse import Currency
 
 import pytest
 
@@ -37,3 +38,9 @@ def test_as_money_object(val, expected, money_code):
 def test_as_money_object_raises(val):
     with pytest.raises(ValueError):
         parser._as_money_object(val)
+
+def test__currency_symbol():
+    expected = [Currency(alpha3='USD', code_num=840, name='United States dollar', symbols=['US$', '$', '＄', '﹩', 'dollar', 'dollars', 'Dollar', 'Dollars', 'US＄', 'US﹩'], minor=2, countries=['AS', 'BB', 'BM', 'BQ', 'EC', 'FM', 'GU', 'HT', 'IO', 'MH', 'MP', 'PA', 'PR', 'PW', 'SV', 'TC', 'TL', 'UM', 'US', 'VG', 'VI'])]
+    test_value = 'USD 4'
+    result = parser._currency_symbol(test_value)
+    assert result == expected
