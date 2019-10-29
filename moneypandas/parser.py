@@ -1,11 +1,12 @@
 import money
-
+import iso4217parse
 import numpy as np
 from pandas.api.types import is_list_like
 from .dtypes import money_patterns
 
 
 def to_money(values, default_money_code=None):
+    print("To money")
     """Convert values to MoneyArray
 
     Parameters
@@ -40,6 +41,7 @@ def to_money(values, default_money_code=None):
 
 
 def _to_money_array(values, default_money_code=None):
+    print("to money array")
     from .money_array import MoneyType, MoneyArray
 
     if isinstance(values, MoneyArray):
@@ -52,9 +54,8 @@ def _to_money_array(values, default_money_code=None):
     return np.atleast_1d(np.asarray(values, dtype=MoneyType._record_type)), default_money_code
 
 
-
-
 def _as_money_object(val, default_money_code=None):
+    print("as money object")
     """Attempt to parse 'val' as any Money object.
 
     """
@@ -77,6 +78,11 @@ def _as_money_object(val, default_money_code=None):
             m = r.match(val)
             if m:
                 va, cu = extract(m)
+                # currency = iso4217parse.parse(cu)
+                # cu = currency[0][3]
+                # print("*** Symbols: {}".format(currency[0][3][1]) + "***")
+            #finds currency info by parsing if regex doesn't work
+            currency = iso4217parse.parse(val)
     elif is_list_like(val) and len(val) == 2:
         try:
             va = np.float64(val[0])
@@ -85,6 +91,8 @@ def _as_money_object(val, default_money_code=None):
             pass
 
     if cu is not None and va is not None:
+        # cu = iso4217parse.parse(cu)
+        # return va, currency[0][3]
         return va, cu
 
     try:
