@@ -7,17 +7,21 @@ import iso4217parse
 def find_currency_data():
     print("running funct")
     currency_symbols = iso4217parse._symbols()
-    symbols = []
+    symbols = {}
+    exclusion_list = ['.', '/']
     for item in currency_symbols:
         code = iso4217parse.parse(item[0])
-        symbols.append({'currency': code[0][0], 'symbol': item[0]})
+        # symbols.append({"'" + item[0][0] + "' : '" + code[0][0] + "'"})
+        if not item[0][0].isalpha() and item[0][0] not in exclusion_list:
+            symbols[item[0][0]] = code[0][0]
+    print(symbols)
     return symbols
 
 symbols = find_currency_data()
 
 money_patterns = [(re.compile(r[0]), r[1]) for r in [
     (
-        r'(-?)([' + ''.join(find_currency_data()) + r'])(\d*\.?\d*\d)',       # -£123.00
+        r'(-?)([' + ''.join(symbols) + r'])(\d*\.?\d*\d)',       # -£123.00
         lambda m: (np.float64(m.group(1) + m.group(3)), symbols[m.group(2)])
     ),
     (
@@ -40,4 +44,3 @@ def is_money(value):
         return True
     else:
         return False
-
