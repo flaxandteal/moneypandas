@@ -1,7 +1,8 @@
-import money
-import iso4217parse
+# pylint: disable = invalid-name
+""" Methods to parse strings/datatypes to find currencies """
 import numpy as np
 from pandas.api.types import is_list_like
+import money
 from .dtypes import money_patterns
 
 
@@ -33,7 +34,8 @@ def to_money(values, default_money_code=None):
     if not is_list_like(values):
         values = [values]
 
-    values, default_money_code = _to_money_array(values, default_money_code=default_money_code)
+    values, default_money_code = _to_money_array(
+        values, default_money_code=default_money_code)
     return MoneyArray(
         values,
         default_money_code=default_money_code
@@ -41,7 +43,7 @@ def to_money(values, default_money_code=None):
 
 
 def _to_money_array(values, default_money_code=None):
-    print("to money array")
+    """ Method to convert a money object to a money array """
     from .money_array import MoneyType, MoneyArray
 
     if isinstance(values, MoneyArray):
@@ -57,12 +59,11 @@ def _currency_symbol(val):
     return iso4217parse.parse(val)
 
 def _as_money_object(val, default_money_code=None):
-    print("as money object")
-    """Attempt to parse 'val' as any Money object.
-
+    """ Method to return a tuple with the monetary value
+    and the currency. Attempt to parse 'val' as any Money object.
+    Uses regex (money_patterns) to get the amount & the currency.
+    'cu' represents currency, and 'va' represents value.
     """
-
-    from .money_array import MoneyType
 
     cu, va = None, None
 
@@ -79,6 +80,7 @@ def _as_money_object(val, default_money_code=None):
         for r, extract in money_patterns:
             m = r.match(val)
             if m:
+                # calls a lambda function that gets the value that matches the expressions
                 va, cu = extract(m)
                 # currency = iso4217parse.parse(cu)
                 # cu = currency[0][3]
@@ -105,6 +107,7 @@ def _as_money_object(val, default_money_code=None):
             cu = default_money_code
             return va, cu
         else:
-            raise ValueError("Currency code is not available, so cannot convert {} - have you set a default?".format(val))
+            raise ValueError(
+                "Currency code is unavailable - cannot convert {}. Set a default?".format(val))
 
     raise ValueError("Could not parse {} as money".format(val))
