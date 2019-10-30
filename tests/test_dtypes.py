@@ -1,6 +1,5 @@
 import pytest
-import moneypandas
-from moneypandas import parser, MoneyArray, dtypes
+from moneypandas import dtypes
 
 def test_find_currency_data():
     result = dtypes.find_currency_data()
@@ -8,4 +7,6 @@ def test_find_currency_data():
     assert result == expected
 
 def test_find_currency_data_type():
-    expected_result = 
+    expected_result = dict
+    result = type(dtypes.find_currency_data())
+    assert result == expected_result
