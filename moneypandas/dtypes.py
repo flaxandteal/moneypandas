@@ -1,5 +1,6 @@
 import re
 import numpy as np
+from decimal import Decimal
 
 symbols = {
         '£': 'GBP',
@@ -11,15 +12,15 @@ symbols = {
 money_patterns = [(re.compile(r[0]), r[1]) for r in [
     (
         r'(-?)([' + ''.join(symbols) + r'])(\d*\.?\d*\d)',       # -£123.00
-        lambda m: (np.float64(m.group(1) + m.group(3)), symbols[m.group(2)])
+        lambda m: (Decimal(m.group(1) + m.group(3)), symbols[m.group(2)])
     ),
     (
         r'([A-Z]{3})\s*(-?\d*\.?\d*\d)',                         # EUR 123
-        lambda m: (np.float64(m.group(2)), m.group(1))
+        lambda m: (Decimal(m.group(2)), m.group(1))
     ),
     (
         r'(-?\d*\.?\d*\d)\s*([A-Z]{3})',                         # 97GBP
-        lambda m: (np.float64(m.group(1)), m.group(2))
+        lambda m: (Decimal(m.group(1)), m.group(2))
     ),
 ]]
 

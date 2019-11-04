@@ -3,6 +3,7 @@ import decimal
 import collections
 
 import numpy as np
+from decimal import Decimal
 from pandas.compat.numpy import function as nv
 import pandas as pd
 from pandas.core import nanops
@@ -26,7 +27,7 @@ class MoneyType(ExtensionDtype):
     type = money.XMoney
     kind = 'O'
     default_money_code = None
-    _record_type = np.dtype([('va', np.float64), ('cu', 'U3')])
+    _record_type = np.dtype([('va', Decimal), ('cu', 'U3')])
     _record_na_value = (0, '')
 
     def __init__(self, *args, default_money_code=None, **kwargs):

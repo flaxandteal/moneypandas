@@ -2,6 +2,7 @@
 """ Methods to parse strings/datatypes to find currencies """
 import numpy as np
 from pandas.api.types import is_list_like
+from decimal import Decimal
 import money
 from .dtypes import money_patterns
 
@@ -72,7 +73,7 @@ def _as_money_object(val, default_money_code=None):
         va = 0
     elif isinstance(val, money.Money):
         cu = val.currency
-        va = np.float64(val.amount)
+        va = Decimal(val.amount)
     elif isinstance(val, str):
         for r, extract in money_patterns:
             m = r.match(val)
@@ -81,7 +82,7 @@ def _as_money_object(val, default_money_code=None):
                 va, cu = extract(m)
     elif is_list_like(val) and len(val) == 2:
         try:
-            va = np.float64(val[0])
+            va = Decimal(val[0])
             cu = str(val[1])
         except TypeError:
             pass
@@ -90,7 +91,7 @@ def _as_money_object(val, default_money_code=None):
         return va, cu
 
     try:
-        va = np.float64(val)
+        va = Decimal(val)
     except TypeError:
         pass
     else:
