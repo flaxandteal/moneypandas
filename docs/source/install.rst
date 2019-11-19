@@ -1,13 +1,8 @@
 Install
 =======
 
-cyberpandas requires pandas 0.23 or newer. On Python 2, the 3rd party `ipaddress`
-module is required (it's built into the standard library in Python 3).
+Run `pipenv shell` or another Python3 virtual envirnonment.
 
-Once pandas is installed, cyberpandas can be installed from conda-forge::
+Run `python3 setup.py develop`
 
-    conda install -c conda-forge cyberpandas
-
-Or PyPI::
-
-    pip install cyberpandas
+The env should be set up. Run `python3 examples/three_currency.py` to check.
