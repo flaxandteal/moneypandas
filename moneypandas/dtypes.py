@@ -1,11 +1,9 @@
 import re
-# from .parser import _currency_symbol
 import numpy as np
 import iso4217parse
 
 
 def find_currency_data():
-    print("running funct")
     currency_symbols = iso4217parse._symbols()
     symbols = {}
     exclusion_list = ['.', '/']
@@ -14,7 +12,6 @@ def find_currency_data():
         # symbols.append({"'" + item[0][0] + "' : '" + code[0][0] + "'"})
         if not item[0][0].isalpha() and item[0][0] not in exclusion_list:
             symbols[item[0][0]] = code[0][0]
-    print(symbols)
     return symbols
 
 symbols = find_currency_data()

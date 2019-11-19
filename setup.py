@@ -10,6 +10,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 install_requires = [
     "pandas>=0.23.0",
     "six",
+    "iso4217parse",
     "money"
 ]
 tests_require = install_requires + [
