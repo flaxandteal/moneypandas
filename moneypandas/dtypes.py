@@ -1,13 +1,21 @@
 import re
 import numpy as np
+import iso4217parse
 
-symbols = {
-        '£': 'GBP',
-        '$': 'USD',
-        '€': 'EUR',
-        '¥': 'JPY',
-        '₹': 'INR'
-}
+
+def find_currency_data():
+    currency_symbols = iso4217parse._symbols()
+    symbols = {}
+    exclusion_list = ['.', '/']
+    for item in currency_symbols:
+        code = iso4217parse.parse(item[0])
+        # symbols.append({"'" + item[0][0] + "' : '" + code[0][0] + "'"})
+        if not item[0][0].isalpha() and item[0][0] not in exclusion_list:
+            symbols[item[0][0]] = code[0][0]
+    return symbols
+
+symbols = find_currency_data()
+
 money_patterns = [(re.compile(r[0]), r[1]) for r in [
     (
         r'(-?)([' + ''.join(symbols) + r'])(\d*\.?\d*\d)',       # -£123.00

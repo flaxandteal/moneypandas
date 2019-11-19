@@ -54,7 +54,6 @@ def _to_money_array(values, default_money_code=None):
 
     return np.atleast_1d(np.asarray(values, dtype=MoneyType._record_type)), default_money_code
 
-
 def _as_money_object(val, default_money_code=None):
     """ Method to return a tuple with the monetary value
     and the currency. Attempt to parse 'val' as any Money object.
@@ -79,6 +78,7 @@ def _as_money_object(val, default_money_code=None):
             if m:
                 # calls a lambda function that gets the value that matches the expressions
                 va, cu = extract(m)
+
     elif is_list_like(val) and len(val) == 2:
         try:
             va = np.float64(val[0])
